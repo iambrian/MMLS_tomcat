@@ -1,5 +1,8 @@
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -8,6 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 
 @WebServlet("/UploadServlet")
 @MultipartConfig(fileSizeThreshold=1024*1024*200,	// 2MB 
@@ -58,6 +67,15 @@ public class UploadServlet extends HttpServlet {
 		//out.write("mongocmd is " + mongoCmd);
 		//Process p = Runtime.getRuntime().exec(mongoCmd); 
 		//Process p = new ProcessBuilder(mongoCmd, fullPath, id, "0").start();
+		MongoClient mc = new MongoClient();
+		DB db = mc.getDB("MasterDB");
+		coll = db.getCollection(id);
+		String input = new Strin(Files.readAllBytes(Paths.get(fullPath)), Charset.defaultCharset());
+		DBObject o = (DBObject) JSON.parse(input);
+		coll.insert(o);
+		
+		
+		
 	}
 
 	/**
