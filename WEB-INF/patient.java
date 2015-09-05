@@ -7,6 +7,7 @@ import javax.servlet.http.*;
 import java.net.UnknownHostException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCursor;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
@@ -37,19 +38,7 @@ String id = request.getParameter("id");
 String type = request.getParameter("type");
 
 if (id==null || type == null) {
-	out.write(
-
-		"{
-		  \"errors\": [
-		    {
-		      \"status\": \"400\",
-		      \"source\": { \"pointer\": \"/patient\" },
-		      \"title\":  \"Bad Request\",
-		      \"detail\": \"Both id and type parameters must be non-null.\"
-		    }
-		  ]
-		}"
-	);
+	out.write("error");
 } else {
 
 	JSONArray list = new JSONArray();
@@ -65,7 +54,7 @@ if (id==null || type == null) {
 			    list.add(cursor.next());
 			}
 
-			out.write(list.toString(4));
+			out.write(list.toString());
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

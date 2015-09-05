@@ -41,18 +41,23 @@ public class UploadServlet extends HttpServlet {
 	
 		for (Part part : request.getParts()) {
 			String fileName = extractFileName(part);
-			fullPath = savePath + File.separator + fileName;
+			fullPath = savePath + File.separator + fileName;	
 			part.write(fullPath);
 		}
 		
 		String id = idGenerator();
-		request.setAttribute("message", "Upload has been done successfully!\nYour database ID is " + id);
+		fullPath = fullPath.replace("//","/");
+		request.setAttribute("message", "Upload has been done successfully!\nYour database ID is " + id+ " "+fullPath);
 		getServletContext().getRequestDispatcher("/message.jsp").forward(
 				request, response);
+		String mongoCmd = "sudo python /opt/tomcat/webapps/ROOT/WEB-INF/myp.py";
+		Runtime rt =  Runtime.getRuntime();
+		Process p =  rt.exec(mongoCmd);
 		
-		String mongoCmd = "sudo python /public/MMLS/python/saveToMongo.py " + fullPath + " " + id;
-		Process p = Runtime.getRuntime().exec(mongoCmd); 
-
+		//String mongoCmd = "sudo python /public/MMLS/python/saveToMongo.py";
+		//out.write("mongocmd is " + mongoCmd);
+		//Process p = Runtime.getRuntime().exec(mongoCmd); 
+		//Process p = new ProcessBuilder(mongoCmd, fullPath, id, "0").start();
 	}
 
 	/**
