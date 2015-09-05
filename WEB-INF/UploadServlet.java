@@ -17,6 +17,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.util.JSON;
 
 @WebServlet("/UploadServlet")
 @MultipartConfig(fileSizeThreshold=1024*1024*200,	// 2MB 
