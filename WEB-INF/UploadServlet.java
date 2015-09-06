@@ -33,6 +33,8 @@ public class UploadServlet extends HttpServlet {
 	 * the web application directory.
 	 */
 	private static final String SAVE_DIR = "uploadFiles";
+
+	String DIAGNOSTIC;
 	
 	/**
 	 * handles file upload
@@ -62,11 +64,14 @@ public class UploadServlet extends HttpServlet {
 		fullPath = fullPath.replace("//","/");
 
 		System.out.println("fullPath: " + fullPath);
-		String[] files = {fullPath};
-		UnZip(files);
+		String[] argv = {fullPath};
+		this.UnZip(files);
 
 
-		request.setAttribute("message", "Upload has been done successfully!\nYour database ID is " + id+ " "+fullPath);
+
+
+
+		request.setAttribute("message", "Upload has been done successfully!\nYour database ID is " + id+ " "+fullPath+"\nDIAGNOSTIC: "+DIAGNOSTIC);
 		getServletContext().getRequestDispatcher("/message.jsp").forward(
 				request, response);
 
@@ -113,7 +118,7 @@ public class UploadServlet extends HttpServlet {
 
 
 
-public static void UnZip(String[] argv) {
+public void UnZip(String[] argv) {
    final int BUFFER = 2048;
       try {
          BufferedOutputStream dest = null;
@@ -140,6 +145,8 @@ public static void UnZip(String[] argv) {
          }
          zis.close();
          System.out.println("entry: "+entry.getName());
+
+         DIAGNOSTIC = "ENTRY="+entry.getName();
       } catch(Exception e) {
          e.printStackTrace();
       }
