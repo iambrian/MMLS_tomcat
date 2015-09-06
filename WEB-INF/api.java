@@ -34,8 +34,6 @@ public class api extends HttpServlet {
 	if (q==null || q.equals("")) {
 		out.write("[{\"status\": \"error\", \"data\": null, \"message\": \"Bad Request. Query cannot be null.\"}]");
 	} else {
-		out.write(q);
-
 		Connection conn = null;
 		Statement stmt = null;
 
