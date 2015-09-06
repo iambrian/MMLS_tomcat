@@ -7,6 +7,7 @@ import javax.servlet.http.*;
 import java.net.UnknownHostException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
@@ -23,41 +24,65 @@ public void init() throws ServletException {
 message = ""; 
 } 
  
-public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, UnknownHostException { 
 // Set response content type  
 response.setContentType("text/html"); 
 // Actual logic goes here. 
 PrintWriter out = response.getWriter(); 
 out.println("<h1>" + message + "</h1>"); 
 
-out.println(request.getParameter("id"));
-out.println(request.getParameter("r"));
-
-
 String id = request.getParameter("id");
 String type = request.getParameter("type");
-
 if (id==null || type == null) {
-	out.write("error");
+	out.write("{''data'': {''type'':''articles'',''id'':''1''}}");
 } else {
 
 	JSONArray list = new JSONArray();
-
+	out.write("\nA");
 	MongoClient mongoClient;
-		try {
-			mongoClient = new MongoClient();	
+	//	try{ 
+			out.write("\nB");
+			mongoClient = new MongoClient();
+			out.write("\nC");	
 			DB db = mongoClient.getDB("MasterDB");
-			DBCollection coll = db.getCollection(id+"format");
+		//	db.getCollectionInfos();
+			out.write("\nD");
+			DBCollection coll = db.getCollection(id);
 			
+			// BasicDBObject document = new BasicDBObject();
+   //  			out.write(String.valueOf(db.collectionExists(id)));
+			// document.put("user_id", "1");
+   //  			System.out.println(coll.insert(document));
+
+			out.write("\nE");
 			DBCursor cursor = coll.find();
-			while(cursor.hasNext()) {
-			    list.add(cursor.next());
+			out.write("\nF");			
+
+			//out.write(cursor.count());
+			int count = cursor.count();
+			System.out.println("count:");
+			System.out.println(count);
+			out.write(Integer.toString(count));
+
+
+			out.write("\nG");
+			if(cursor.hasNext()) {
+			 	
+				DBObject o = cursor.next();
+				
+				out.write(((Double)(o.get(type))).toString());
+				list.add(((Double)(o.get(type))).toString());
+				
+				out.write(type);
 			}
 
 			out.write(list.toString());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+	//	} catch (UnknownHostException ex) {
+	//		out.write("ERROR");
+	//		StringWriter errors = new StringWriter();
+	//		ex.printStackTrace(new PrintWriter(errors));
+	//		out.write( errors.toString());
+	//	}
 
 	}
 
