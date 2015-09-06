@@ -30,10 +30,12 @@ public class api extends HttpServlet {
 	PrintWriter out = response.getWriter(); 
 
 	String q = request.getParameter("q");
+	String train = request.getParameter("train");
+	String train_ticker = request.getParameter("train_ticker");
 	
-	if (q==null || q.equals("")) {
-		out.write("[{\"status\": \"error\", \"data\": null, \"message\": \"Bad Request. Query cannot be null.\"}]");
-	} else {
+	if ((q==null || q.equals(""))&&(train==null || train.equals(""))&&(train_ticker==null || train_ticker.equals(""))) {
+		out.write("[{\"status\": \"error\", \"data\": null, \"message\": \"Bad Request.\"}]");
+	} else if (!(q==null || q.equals(""))) {
 		Connection conn = null;
 		Statement stmt = null;
 
@@ -93,8 +95,40 @@ public class api extends HttpServlet {
 				out.write(errors.toString());
 			}//end finally try
 		}//end try
+		} else if (!(train==null || train.equals(""))) {
+			if(train.equals("mysql")) {
+				MySQLWrapper msw = new MySQLWrapper();
+				String msw_results = msw.trainNetwork(train_ticker);
+				out.write(msw_results);
+			} else if(train.equals("mongo")) {
+				MongoWrapper mw = new MongoWrapper();
+				String mw_results = mw.trainNetwork();
+				out.write(mw_results);
+			} else if(train.equals("static")) {
+				String s = readFile("/public/MMLS/finance_data.txt");
+				out.write(s);
+			}
+
 		}
 	}
+
+
+	String readFile(String fileName) throws IOException {
+    BufferedReader br = new BufferedReader(new FileReader(fileName));
+    try {
+        StringBuilder sb = new StringBuilder();
+        String line = br.readLine();
+
+        while (line != null) {
+            sb.append(line);
+            sb.append("\n");
+            line = br.readLine();
+        }
+        return sb.toString();
+    } finally {
+        br.close();
+    }
+}
 
 
 
