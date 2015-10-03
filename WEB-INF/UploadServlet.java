@@ -67,34 +67,16 @@ public class UploadServlet extends HttpServlet {
 		String[] argv = {fullPath};
 		this.UnZip(files);
 
-
-
-
-
 		request.setAttribute("message", "Upload has been done successfully!\nYour database ID is " + id+ " "+fullPath+"\nDIAGNOSTIC: "+DIAGNOSTIC);
 		getServletContext().getRequestDispatcher("/message.jsp").forward(
 				request, response);
 
-
-
-
-		// String mongoCmd = "sudo python /opt/tomcat/webapps/ROOT/WEB-INF/myp.py";
-		// Runtime rt =  Runtime.getRuntime();
-		// Process p =  rt.exec(mongoCmd);
-		
-		//String mongoCmd = "sudo python /public/MMLS/python/saveToMongo.py";
-		//out.write("mongocmd is " + mongoCmd);
-		//Process p = Runtime.getRuntime().exec(mongoCmd); 
-		//Process p = new ProcessBuilder(mongoCmd, fullPath, id, "0").start();
 		MongoClient mc = new MongoClient();
 		DB db = mc.getDB("MasterDB");
 		DBCollection coll = db.getCollection(id);
 		String input = new String(Files.readAllBytes(Paths.get(fullPath)), Charset.defaultCharset());
 		DBObject o = (DBObject) JSON.parse(input);
 		coll.insert(o);
-		
-		
-		
 	}
 
 	/**
@@ -115,42 +97,37 @@ public class UploadServlet extends HttpServlet {
 		return (""+System.currentTimeMillis());
 	}
 
-
-
-
-public void UnZip(String[] argv) {
-   final int BUFFER = 2048;
-      try {
-         BufferedOutputStream dest = null;
-         FileInputStream fis = new 
-	   FileInputStream(argv[0]);
-         ZipInputStream zis = new 
-	   ZipInputStream(new BufferedInputStream(fis));
-         ZipEntry entry;
-         while((entry = zis.getNextEntry()) != null) {
-            System.out.println("Extracting: " +entry);
-            int count;
-            byte data[] = new byte[BUFFER];
-            // write the files to the disk
-            FileOutputStream fos = new 
-	      FileOutputStream(entry.getName());
-            dest = new 
-              BufferedOutputStream(fos, BUFFER);
-            while ((count = zis.read(data, 0, BUFFER)) 
-              != -1) {
-               dest.write(data, 0, count);
-            }
-            dest.flush();
-            dest.close();
-         }
-         zis.close();
-         System.out.println("entry: "+entry.getName());
-
-         DIAGNOSTIC = "ENTRY="+entry.getName();
-      } catch(Exception e) {
-         e.printStackTrace();
-      }
-   }
+	public void UnZip(String[] argv) {
+		final int BUFFER = 2048;
+		try {
+			BufferedOutputStream dest = null;
+			FileInputStream fis = new 
+			FileInputStream(argv[0]);
+			ZipInputStream zis = new 
+			ZipInputStream(new BufferedInputStream(fis));
+			ZipEntry entry;
+		while((entry = zis.getNextEntry()) != null) {
+			System.out.println("Extracting: " +entry);
+			int count;
+			byte data[] = new byte[BUFFER];
+			// write the files to the disk
+			FileOutputStream fos = new 
+			FileOutputStream(entry.getName());
+			dest = new 
+			BufferedOutputStream(fos, BUFFER);
+			while ((count = zis.read(data, 0, BUFFER)) != -1) {
+				dest.write(data, 0, count);
+			}
+			dest.flush();
+			dest.close();
+		}
+			zis.close();
+			System.out.println("entry: "+entry.getName());
+			DIAGNOSTIC = "ENTRY="+entry.getName();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 
 

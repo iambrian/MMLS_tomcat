@@ -3,14 +3,9 @@ import java.io.*;
 import javax.servlet.*; 
 import javax.servlet.http.*;
 
-
 // import sql
 import java.sql.*;
 import java.util.*;
-
-// import json
-// import net.sf.json.JSONArray;
-// import net.sf.json.JSONObject;
 
 // Extend HttpServlet class 
 public class api extends HttpServlet { 
@@ -48,12 +43,11 @@ public class api extends HttpServlet {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = q ;// e.g. "SELECT symbol, close_p FROM price"
+			sql = q ; // e.g. "SELECT symbol, close_p FROM price"
 			ResultSet rs = stmt.executeQuery(sql);
 			ArrayList<Double> tickerPrices = null;
 			String ticker = null;
 
-			// out.write(ResultSetConverter.convert(rs).toString());
 			out.write(Convertor.convertToJSON(rs).toString());
 
 			rs.close();
@@ -112,7 +106,6 @@ public class api extends HttpServlet {
 		}
 	}
 
-
 	String readFile(String fileName) throws IOException {
     BufferedReader br = new BufferedReader(new FileReader(fileName));
     try {
@@ -129,8 +122,4 @@ public class api extends HttpServlet {
         br.close();
     }
 }
-
-
-
-
 } 
